@@ -1,0 +1,406 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\vp}{\varpi}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Sh}{\circledcirc}
+\newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\dA}{d_{A_0}}
+
+\title{Bug Fixes for Geometric Unity:\\ A Charitable Formalization in Lean}
+\author{Claude\thanks{Claude is an AI model made by Anthropic. This note and the accompanying
+Lean code were written by Claude at the request of a user, who chose the topic and asked that
+it appear under this name. It is not a statement by Anthropic. Every mathematical claim marked
+as checked is verified by the Lean kernel and does not depend on trusting the author.}}
+\date{November 2026}
+
+\emergencystretch=3em
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We formalize in Lean~4 with Mathlib as much of E.~Weinstein's \emph{Geometric Unity: Author's
+Working Draft v1.0} as is stated precisely enough to formalize, reading the draft as charitably
+as we can. The finite-dimensional claims of Sections~3, 4 and~8 are correct. A decomposition
+that the draft asks to have checked is consistent. Sections~6 and~7 contain a sign error that
+makes two lemmas false as printed, and no single sign convention makes the printed lemmas
+simultaneously true; we give a three-sign repair under which all of them hold. After the
+repair, and granting every standard fact the proof assistant's library cannot yet express, one
+thing remains: the field equation is built from an operator the draft does not define. We then
+try to supply the missing definition from the literature. With the textbook choice of forms,
+the draft's sample operator is the Ricci tensor if read as printed, and is exactly the Einstein
+tensor, with the draft's coefficient, under one of eight readings of its brackets. So the part
+of the operator that can be reconstructed is the part that was already known, and the part that
+would be new is the part that is missing.
+\end{abstract}
+
+\section{Ground rules}
+
+The draft \cite{GU} says of itself that ``the interested community is welcome to send bug
+fixes'' (footnote~9). This note takes that literally. A proof assistant is a good tool for the
+job because it has no opinion of the author. It accepts what is defined and proved and stops at
+what is not.
+
+We read the draft under four rules, each chosen in its favor.
+
+\begin{enumerate}
+\item \textbf{Standard mathematics is granted.} Mathlib has no spin structures, no connections
+on associated bundles, no Hodge star on bundle-valued forms. Wherever the draft uses such
+things in the standard way, we assume they exist and behave as the textbooks say. None of
+Mathlib's gaps is counted against the draft.
+\item \textbf{Conflicting conventions are resolved in the draft's favor.} Where the text is
+inconsistent we look for the reading that makes the most statements true.
+\item \textbf{What can be repaired is repaired.} An error with a fix is reported with the fix.
+\item \textbf{No physics is judged.} We ask only whether the mathematics is defined and whether
+the stated lemmas follow. Objections concerning anomalies, unitarity or supersymmetry
+\cite{NP} are outside what a proof assistant checks, and we take no position on them.
+\end{enumerate}
+
+Sections~5--7 of the draft are algebra on three pieces of data, and the draft's own proofs use
+nothing else: a group $\mathcal H$ (the gauge group), an abelian group $\mathcal N$ on which it
+acts (the ad-valued one-forms, with $h\cdot n = h n h^{-1}$), and a map
+$c:\mathcal H\to\mathcal N$, $c(h)=h^{-1}(\dA h)$, satisfying the Leibniz rule
+$c(h_1h_2)=h_2^{-1}c(h_1)h_2+c(h_2)$. We formalize at that level of generality. A statement
+proved from these axioms holds in the draft's geometric setting. A statement that fails from
+these axioms fails there too whenever the explicit error term is nonzero.
+
+\section{What checks}
+
+Table~\ref{tab} lists every statement examined. Everything before Section~6 that could be
+checked is correct.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Draft & Statement & Result \\
+\midrule
+\S3.1, (3.8)--(3.9) & Signature of the Frobenius form on the fibre of metrics & True \\
+\S3.5 & Signature totals leading to $(7,7)$ & True \\
+(3.21)--(3.27) & Clifford degrees forming $gl(64,\mathbb R)$, $so(64,64)$, $u(64,64)$ & Consistent \\
+(4.2)--(4.3) & Internal spinor dimensions $32$ and $16$ & True \\
+(8.2)--(8.6) & $2^{14}=128^2$ and the degree split of $u(64,64)$ & True \\
+Def.~5.1, (5.9) & The inhomogeneous gauge group $\mathcal G$ is a group & True \\
+(6.2) & Right action of $\mathcal G$ on connections & True \\
+Lemma 6.1 & The tilted map $\tau$ is a homomorphism & True \\
+\S6.2 & $\hat\tau$ parameterizes the stabilizer of $A_0$ & True \\
+Lemma 6.3 & $\pi$ is constant on tilted orbits & True as printed \\
+Lemma 6.4 & Left action of $\mathcal G$ on $\mathcal N$ & True \\
+Lemma 6.5 & The bi-connection map is equivariant & \textbf{False as printed} \\
+Lemma 7.2 & The augmented torsion is equivariant & \textbf{False as printed} \\
+\S\S6--7 & Lemmas 6.3 and 7.2 under one sign of $\tau$ & \textbf{Inconsistent} \\
+Def.~8.1 & The forms $\Phi_i$ & \textbf{Not determined} \\
+(9.2) & The shiab operator & \textbf{Not defined} \\
+(8.1) & The conjugation recipe is equivariant for every $\Phi$ & True \\
+(9.3) & The sample operator is Einstein's contraction & One reading of eight \\
+(9.8) & Gauge covariance of the field equation & Conditional \\
+\bottomrule
+\end{tabular}
+\caption{Statements examined. All results are machine-checked except the row for (9.3), which is numerical, and where Section~\ref{sec:limits} says otherwise.}
+\label{tab}
+\end{table}
+
+Two of these deserve a remark.
+
+\paragraph{The signature.} For a metric of signature $(1,3)$ the form (3.8),
+$\langle A,B\rangle=\operatorname{Tr}(g^{-1}Ag^{-1}B)$, is diagonal on symmetric matrices with
+seven coefficients of one sign and three of the other, and the trace direction lies among the
+seven. So (3.8) as defined has signature $(7,3)$, and the $(4,6)$ the draft uses comes from
+reversing the sign of the trace direction by hand. The draft says this is a choice (footnote~2),
+so we record it as true.
+
+\paragraph{A request fulfilled.} Footnote~3 says of the decomposition (3.27) of $u(64,64)$
+into exterior powers that it ``was taken from a decades old file and should be checked by
+someone more current''. We checked it. Given the standard rule for the degrees appearing in a
+Clifford commutator, the degrees congruent to $1,2 \bmod 4$ are closed under the bracket, the
+degrees congruent to $0,3\bmod 4$ twisted by $i$ bracket with them and with each other as
+(3.27) requires, and the dimensions are $8128+8256=128^2$. The decomposition is consistent.
+
+\section{The bug}
+
+The draft defines the tilted map in (6.4) by
+\[
+\tau(h) = \bigl(h,\; -h^{-1}(\dA h)\bigr) = (h, -c(h)),
+\]
+and the augmented torsion in (7.3) by $T_{(\eps,\vp)}=\vp-c(\eps)$. Lemma~7.2 asserts
+$T_{g\cdot\tau(h)}=h^{-1}T_g h$. Using the group law (5.9) and the Leibniz rule,
+\[
+T_{g\cdot\tau(h)}
+= \bigl(h^{-1}\vp h - c(h)\bigr) - \bigl(h^{-1}c(\eps)h + c(h)\bigr)
+= h^{-1}T_g h \;-\; 2\,h^{-1}(\dA h).
+\]
+The draft's proof (7.4) writes $-h^{-1}(\dA h)$ in its first line and $+h^{-1}(\dA h)$ in its
+second. The same change of sign occurs between the lines of (6.20), the proof of Lemma~6.5.
+
+\begin{theorem}[\lean{torsion\_mul\_tauMinus}, \lean{biConn\_mul\_tauMinus}]
+With $\tau$ as printed in \textup{(6.4)}, Lemma~7.2 fails by $-2c(h)$, and the first component
+of Lemma~6.5 fails by the same term.
+\end{theorem}
+
+The charitable response is that the sign in (6.4) is a misprint. With
+$\tau(h)=(h,+c(h))$, which is also the form in the 2020 lecture as transcribed in \cite{NP},
+Lemmas~6.5 and~7.2 are true. But Lemma~6.3, with $\pi$ as printed in (6.11), then fails:
+\[
+\pi\bigl(g\cdot\tau(h)\bigr) = \pi(g) + 2\,\eps\,(\dA h)\,h^{-1}\eps^{-1}.
+\]
+
+\begin{theorem}[\lean{lemma63\_and\_lemma72\_incompatible}]
+Suppose $\mathcal N$ has no $2$-torsion. Fix either sign for $\tau$. If Lemma~6.3 and Lemma~7.2
+both hold as printed for that sign, then $h^{-1}(\dA h)=0$ for every $h\in\mathcal H$.
+\end{theorem}
+
+So the printed text cannot be made true by choosing a convention. The draft anticipates
+something of the kind: footnote~7 says there ``may be 2 or more conflicting conventions in this
+section''. The theorem says where they are and that they cannot be reconciled without changing
+a definition.
+
+\section{The fix}
+
+Change three signs and leave everything else as printed:
+\begin{align*}
+\text{(6.4)}\quad & \tau(h) = \bigl(h,\; +h^{-1}(\dA h)\bigr),\\
+\text{(6.11)}\quad & \pi(\eps,\vp) = \eps\vp\eps^{-1} - (\dA\eps)\eps^{-1},\\
+\text{(6.15)}\quad & (\eps,\vp)\cdot\gamma = \eps(\vp+\gamma)\eps^{-1} - (\dA\eps)\eps^{-1}.
+\end{align*}
+
+\begin{theorem}[\lean{GU.Repaired}]
+With these three changes, Lemmas~6.1, 6.3, 6.4, 6.5 and~7.2 all hold, the stabilizer of $A_0$
+is the image of the map $\hat\tau$ of \textup{(6.9)} as printed, the action \textup{(6.15)} is
+the one induced by $\pi$ from left multiplication, and right multiplication by $\tau(h)$ acts on
+$A_0+\vp$ as the gauge transformation $h$.
+\end{theorem}
+
+The repair also resolves an oddity in the printed text, where the ``tilted'' map $\tau$ of
+(6.4) and the ``flipped'' map $\hat\tau$ of (6.9) are given by the same formula. After the
+repair they are different maps with different jobs, which is evidently what was meant.
+
+We regard Sections~5--7, so repaired, as correct. From here on we use the repaired version.
+
+\section{What cannot be fixed}
+
+The first-order field equation (9.8) is
+\[
+\Sh_\eps\, F_{A_\omega} \;=\; -\,\kappa_1 *T_\omega .
+\]
+The curvature $F$ and the Hodge star are standard and we grant them. $T$ is the torsion of
+Section~7, now verified. The remaining ingredient is the shiab operator
+$\Sh_\eps:\Omega^2(Y,\mathrm{ad})\to\Omega^{d-1}(Y,\mathrm{ad})$. It is the one new operator
+in the equation, and the draft says the following about it.
+
+\begin{itemize}
+\item ``Then a Shiab contraction operator might look like: [(8.1)] or perhaps a sum of such
+terms.''
+\item ``The author is no longer in a position to go chasing after the complete picture and
+simply details some of the available tools for customizing such operators.''
+\item ``The particulars of the Shiab operators are workmanlike and not of much interest.''
+\item ``Unfortunately, the author is no longer conversant in that language and has been unable
+to locate the notes from decades ago that originally picked out the operator of choice.''
+\item ``The Shiab operator that he settled on (but cannot yet now locate) was chosen for its
+properties relative to the Bianchi identity.'' (footnote~10)
+\end{itemize}
+
+A repair requires something to repair. Here the charitable reading has nothing to work with,
+because the object is absent rather than wrong.
+
+The draft does offer one sample operator, (9.3), ``which makes the parallel to Einstein's
+contraction of the full Riemannian curvature explicit''. We tried to take that as the
+definition. It is built from forms $\Phi_1$ and $\Phi_2$, and Definition~8.1 says only that the
+$\Phi_i$ are ``a basis for the invariant subspaces of''
+$[\Lambda^i(\mathbb R^{7,7})\otimes u(64,64)]^{Spin(7,7)}$. This does not determine them.
+
+\begin{proposition}[\lean{equivariant\_mul\_commuting}]
+Let a group act on a ring $A$ by conjugation and on a set $V$. If $\Phi:V\to A$ is equivariant
+and $\lambda\in A$ commutes with the group, then $v\mapsto\Phi(v)\lambda$ is equivariant.
+\end{proposition}
+
+In $Cl(7,7)$ the volume element $\lambda$ commutes with $Spin(7,7)$. Taking $\Phi(v)=\gamma(v)$
+gives a second invariant $\gamma(v)\lambda$, of Clifford degree $13$ where the first has
+degree~$1$. The draft's own equation (8.5) places both degrees inside $so(64,64)\subset
+u(64,64)$. The same holds for $\Phi_2$ with degrees $2$ and~$12$, by (8.5) and (8.6). So each
+space the $\Phi_i$ are drawn from is at least two-dimensional, and the sample operator (9.3)
+has free parameters that the draft does not fix, in addition to the constant $\kappa_1$, which
+is given no value.
+
+What can be stated in Lean is therefore this.
+
+\begin{theorem}[\lean{upsilon\_equivariant}]
+Let $\Sh$ be \emph{any} family of additive maps
+$\Sh_\eps:\Omega^2\to\Omega^{d-1}$ satisfying
+$\Sh_{\eps h}(h^{-1}\xi h)=h^{-1}(\Sh_\eps\xi)h$. Then, granting the standard equivariance of
+curvature and of the Hodge star,
+$\Upsilon_g=\Sh_\eps F_g+\kappa_1 *T_g$ satisfies
+$\Upsilon_{g\cdot\tau(h)}=h^{-1}\Upsilon_g h$.
+\end{theorem}
+
+This is the central claim of the theory in the strongest form we can prove: the field equation
+is gauge covariant for every operator with the stated property. It is a true theorem. It is
+also a theorem about a variable. The draft supplies no value for the variable, and the claims
+that depend on its particular value, including that it annihilates the Weyl curvature, that
+the equation reproduces Einstein's, and everything in Sections~10--12, cannot be stated.
+
+\section{Filling the gap from the literature}\label{sec:fill}
+
+Rule~3 says to repair what can be repaired, so we tried to supply the operator ourselves.
+
+\paragraph{Equivariance is free.} The recipe of (8.1) conjugates a fixed form by the group
+element: $\Sh_\eps\xi=[\eps^{-1}\Phi\eps\wedge *\xi]$.
+
+\begin{proposition}[\lean{conjugated\_pairing\_equivariant}]
+For any fixed $\Phi$ and any equivariant pairing $B$, the operator
+$\Sh_\eps\xi=B(\eps^{-1}\Phi\eps,\,\xi)$ satisfies
+$\Sh_{\eps h}(h^{-1}\xi h)=h^{-1}(\Sh_\eps\xi)h$.
+\end{proposition}
+
+So the hypothesis of Theorem~5 holds for every operator of this shape, and the gauge covariance
+of the field equation is established for all of them. This is good news for the draft. It also
+means that gauge covariance, the property the construction is advertised for, does nothing to
+select $\Phi$.
+
+\paragraph{The textbook forms.} The literature has a canonical candidate for the $\Phi_i$: the
+tautological Clifford-valued forms
+\[
+\Phi_1=\sum_a e^a\otimes\gamma_a,\qquad \Phi_2=\sum_{a<b} e^a\wedge e^b\otimes\gamma_a\gamma_b ,
+\]
+where $\Phi_1$ is the form whose Clifford action defines the Dirac operator. We put these into
+the sample operator (9.3) at $\eps=1$ and applied it to the curvature of the spin connection of
+a metric, $\xi=\tfrac14 R_{efcd}\,e^e\wedge e^f\otimes\gamma^c\gamma^d$. After taking Hodge
+duals, (9.3) has a first term $P_f=\sum_a[\gamma_a,\xi_{af}]$, labelled ``Ricci like'', and a
+second term $Q_f=[\gamma_f,S]$ with $S=\sum_{a<b}[\gamma_a\gamma_b,\xi_{ab}]$, labelled
+``Ricci scalar like''. The draft's notation allows each bracket to be a commutator or the
+symmetric product $\{a,b\}=i(ab+ba)$ of its appendix, and (9.3) prints plain brackets. We
+evaluated all eight combinations on random tensors with the symmetries of a Riemann tensor, in
+dimensions $4$ and $6$ with a positive-definite metric
+(\lean{experiments/einstein\_check.py}).
+
+\begin{enumerate}
+\item In every combination the Weyl part of the curvature is annihilated, as the draft
+asserts.
+\item With commutators throughout, the second term is identically zero and the operator is the
+Ricci tensor alone.
+\item In exactly one combination, a commutator in the first term and the symmetric product in
+both brackets of the second, the operator is $\mathrm{Ric}-\tfrac12 R\,g$, the Einstein tensor.
+The magnitude $\tfrac12$ is the coefficient printed in (9.3). Its sign depends on conventions
+for the Hodge star and the Clifford relation that the draft does not state.
+\end{enumerate}
+
+The reason for item~2 is short. The Riemann tensor is unchanged when its first pair of indices
+is exchanged with its second, which makes the two orderings in the inner bracket equal, so
+their difference vanishes. And had the inner bracket produced the scalar curvature, the outer
+bracket would be the commutator of $\gamma_f$ with a scalar, which is also zero. The symmetric
+product adds where the commutator subtracts, and
+$R_{abcd}\gamma^a\gamma^b\gamma^c\gamma^d=-2R$ supplies the scalar.
+
+Without its scalar term the equation is the one Einstein published in November 1915 and
+replaced later the same month, because the Ricci tensor alone is not divergence-free and the
+equation is then inconsistent with conservation of energy.
+
+\paragraph{What the reconstruction shows.} Read as generously as possible, with forms from the
+textbooks and the one bracket assignment that works, the draft's sample operator is correct on
+the gravitational part of the curvature. We are glad to be able to report that. But what it is
+correct \emph{as} is the Einstein tensor in Clifford notation, which is the contraction of
+Einstein--Cartan gravity and has been known for a century. The curvature in the draft takes
+values in all of $u(64,64)$, of which $so(7,7)=\Lambda^2$ is $91$ dimensions out of $16384$.
+For the rest, the pair symmetry and Bianchi identity used above are not available, the
+literature offers no operator, and the draft does not say what $\Sh$ does. That remainder is
+where anything new in the theory would have to be.
+
+\section{What would complete it}
+
+After the reconstruction the list is short. It would suffice to state:
+\begin{enumerate}
+\item whether the forms and brackets of Section~\ref{sec:fill} are the intended ones, and
+which combination of each $\Phi_i$ with its volume-element twin is meant;
+\item a value or a role for $\kappa_1$;
+\item what $\Sh$ does to curvature outside $so(7,7)$, and a proof of whatever property replaces
+``annihilates the Weyl curvature'' there.
+\end{enumerate}
+Items 1 and 2 are a few lines. Item 3 is the theory.
+
+\paragraph{An offer.} This is meant literally. The signs are fixed, the decomposition is
+checked, and the gravitational part of the operator is reconstructed. In the Lean project the
+operator is a single field, \lean{FieldEquationInputs.shiab}, waiting for a definition. If the
+author can recall the operator, or choose one, it goes in that field, and the claims that
+depend on it become statements a proof assistant can check. We would be glad to finish the
+job.
+
+\section{Limits of this note}\label{sec:limits}
+
+The results for Sections~5--7 are proved for the abstract data described in Section~1, which
+is all the draft's proofs use. The identification of that data with gauge transformations,
+one-forms and $h^{-1}\dA h$ is ours and is not machine-checked. The Clifford degree rule used
+for (3.27), the isomorphism $Cl(7,7)\cong\mathbb R(128)$, and the two facts about the volume
+element used in Section~5 are standard and are taken as known rather than derived. The
+bundle-level constructions of Sections~3 and~4 were not formalized; only their pointwise
+linear algebra was. The results of Section~\ref{sec:fill} on the Einstein tensor are numerical, for a
+positive-definite metric in dimensions $4$ and $6$ rather than signature $(7,7)$ in dimension
+$14$, and are not formalized. Nothing here bears on whether a completed theory would describe
+nature.
+
+The Lean project accompanying this note builds against Mathlib for Lean~4.35 and contains no
+\texttt{sorry}.
+
+
+\section{Conclusion, in plain terms}
+
+Here is what happened, without the notation.
+
+The draft is a recipe. We followed it as far as it goes. The early steps are standard and
+correct. In the middle, two steps contradict each other because a minus sign changes partway
+through a calculation; we found where, and changed three signs so that everything agrees.
+Every long manuscript has errors of this kind and they count for little.
+
+Then the recipe reaches its main step, the one ingredient that is new, and says that the
+author used to know what it was and has lost his notes. We tried the nearest thing from the
+standard cookbook. Used exactly as the recipe is written, it gives the version of Einstein's
+equation that Einstein himself discarded in 1915. Used in the one way that works, it gives
+Einstein's equation. Either way it gives nothing new, and it covers a small corner of what
+the recipe needs.
+
+Four things seem worth drawing from this.
+
+\emph{Wrong and undefined are different conditions.} The sign errors made definite claims, so
+they could be tested, found false and corrected. The operator makes no definite
+claim, so there is nothing to test. Nguyen and Polya close their response by quoting Dyson: it
+is better to be wrong than to be vague. A proof assistant enforces that preference mechanically.
+It will take a false statement and show that it is false. It cannot do anything with a
+statement that has not been made.
+
+\emph{Formalization is a test of completeness, and passing it takes no cleverness.} Nothing in
+this note was difficult. The tool's contribution was to decline to continue past a missing
+definition, where a sympathetic reader continues without noticing. This is also why
+formalizing a theory cannot be delegated to a future, more capable tool. A better prover
+checks faster. It does not supply definitions on the author's behalf, and if it did, the
+result would be the prover's theory.
+
+\emph{Charity is a method and not only a courtesy.} We granted every standard fact, resolved
+every ambiguity in the draft's favor and repaired what could be repaired. What survives that
+treatment cannot be attributed to an unsympathetic reading. A gap that remains after the
+reader has done everything possible to close it belongs to the text.
+
+\emph{Where the theory can be completed, it returns what is already known.} This is the
+observation we would most like to be shown wrong about, and it is easy to show wrong: state
+the operator. Until then the claim that the equation unifies anything rests on the part of the
+equation that does not yet exist. This is not evidence that the idea is false. It is the
+absence of anything that could be evidence either way, and the burden of supplying it rests
+with the person making the claim.
+
+A last point concerns this note itself. Its author is a language model, and a language model's
+assurance that a proof is correct is worth nothing. That is the reason for the form the work
+takes. The Lean results do not ask to be believed; anyone can build the project and watch the
+kernel accept them. The numerical experiment is a short script and can be rerun. The same standard
+that this note applies to the draft is the one it should be held to.
+
+\begin{thebibliography}{9}
+\bibitem{GU} E.~Weinstein, \emph{Geometric Unity: Author's Working Draft, v~1.0}, April~1,
+2021.
+\bibitem{NP} T.~Nguyen and T.~Polya, \emph{A Response to Geometric Unity}, February~23, 2021.
+\end{thebibliography}
+
+\end{document}
