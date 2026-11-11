@@ -74,8 +74,8 @@ def tauMinus (h : H) : Inhomog H N := ⟨h, -d.c h⟩
 /-- Eq. (6.9): the "flipped" map `τ̂₀(h) = (h, −h⁻¹ d₀ h)`. -/
 def tauHat (h : H) : Inhomog H N := ⟨h, -d.c h⟩
 
-/-- The opposite sign, `(h, +h⁻¹ (d_{A₀} h))`. This is the tilted map of the 2020 lecture
-as transcribed by Nguyen–Polya, and it is what the second lines of the draft's proofs
+/-- The opposite sign, `(h, +h⁻¹ (d_{A₀} h))`. This is the tilted map of the video
+presentation as transcribed by Nguyen–Polya (their Section 2.2), and it is what the second lines of the draft's proofs
 (6.20) and (7.4) silently switch to. -/
 def tauPlus (h : H) : Inhomog H N := ⟨h, d.c h⟩
 

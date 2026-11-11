@@ -15,10 +15,10 @@
 \newcommand{\dA}{d_{A_0}}
 
 \title{Bug Fixes for Geometric Unity:\\ A Charitable Formalization in Lean}
-\author{Claude\thanks{Claude is an AI model made by Anthropic. This note and the accompanying
-Lean code were written by Claude at the request of a user, who chose the topic and asked that
-it appear under this name. It is not a statement by Anthropic. Every mathematical claim marked
-as checked is verified by the Lean kernel and does not depend on trusting the author.}}
+\author{Claude\thanks{Claude is an AI model made by Anthropic. The B~Man chose the topic and
+directed the work; Claude wrote the Lean code and this note. It is not a statement by
+Anthropic. Every mathematical claim marked as checked is verified by the Lean kernel and does
+not depend on trusting either author.} \and The B~Man}
 \date{November 2026}
 
 \emergencystretch=3em
@@ -50,7 +50,9 @@ supplied in the form the draft describes.
 The draft \cite{GU} says of itself that ``the interested community is welcome to send bug
 fixes'' (footnote~9). This note takes that literally. A proof assistant is a good tool for the
 job because it has no opinion of the author. It accepts what is defined and proved and stops at
-what is not.
+what is not. We use Lean~4 \cite{Lean4} and its mathematical library Mathlib \cite{Mathlib}.
+Every quotation from the draft below was compared with the PDF cited as \cite{GU}, and
+equation, lemma and footnote numbers are the draft's own.
 
 The draft also says, in the footnote to its title, that its author ``is not a physicist and is
 no longer an active academician, but is an Entertainer'', and it calls itself ``this work of
@@ -63,23 +65,35 @@ only checks what is there.
 We read the draft under four rules, each chosen in its favor.
 
 \begin{enumerate}
-\item \textbf{Standard mathematics is granted.} Mathlib has no spin structures, no connections
-on associated bundles, no Hodge star on bundle-valued forms. Wherever the draft uses such
-things in the standard way, we assume they exist and behave as the textbooks say. None of
+\item \textbf{Standard mathematics is granted.} The revision of Mathlib we build against has
+Clifford algebras and the spin group, a Hodge star on the exterior powers of a single vector
+space, and covariant derivatives on vector bundles, including the Levi-Civita connection. It has
+no principal bundles, no spin structures or spinor bundles, no connections on associated
+bundles or their curvature, and no Hodge star on bundle-valued forms. Wherever the draft uses
+such things in the standard way \cite{KN,LM}, we assume they exist and behave as the textbooks
+say. None of
 Mathlib's gaps is counted against the draft.
 \item \textbf{Conflicting conventions are resolved in the draft's favor.} Where the text is
 inconsistent we look for the reading that makes the most statements true.
 \item \textbf{What can be repaired is repaired.} An error with a fix is reported with the fix.
 \item \textbf{No physics is judged.} We ask only whether the mathematics is defined and whether
-the stated lemmas follow. Objections concerning anomalies, unitarity or supersymmetry
-\cite{NP} are outside what a proof assistant checks, and we take no position on them.
+the stated lemmas follow. The objections of Nguyen and Polya concerning the chiral anomaly,
+unitarity and supersymmetry \cite[Sections~3.2 and~3.3]{NP} are outside what a proof assistant
+checks, and we take no position on them.
 \end{enumerate}
 
 Sections~5--7 of the draft are algebra on three pieces of data, and the draft's own proofs use
 nothing else: a group $\mathcal H$ (the gauge group), an abelian group $\mathcal N$ on which it
 acts (the ad-valued one-forms, with $h\cdot n = h n h^{-1}$), and a map
 $c:\mathcal H\to\mathcal N$, $c(h)=h^{-1}(\dA h)$, satisfying the Leibniz rule
-$c(h_1h_2)=h_2^{-1}c(h_1)h_2+c(h_2)$. We formalize at that level of generality. A statement
+$c(h_1h_2)=h_2^{-1}c(h_1)h_2+c(h_2)$. In the geometric setting these are the group of gauge
+transformations, the one-forms with values in the adjoint bundle, and the change of the
+connection $A_0$ under a gauge transformation \cite[Section~2.1]{DK}. A map with this Leibniz
+property is a crossed homomorphism, or $1$-cocycle, for the right action of $\mathcal H$ on
+$\mathcal N$, and it is a classical fact that crossed homomorphisms correspond to the
+homomorphisms $h\mapsto(h,c(h))$ into the semidirect product that split the projection onto
+$\mathcal H$ \cite[Chapter~IV, Section~2]{Brown}. The draft's Lemma~6.1 is an instance of that
+fact. We formalize at that level of generality. A statement
 proved from these axioms holds in the draft's geometric setting. A statement that fails from
 these axioms fails there too whenever the explicit error term is nonzero.
 
@@ -115,7 +129,7 @@ Def.~8.1 & The forms $\Phi_i$ & \textbf{Not determined} \\
 (9.8) & Gauge covariance of the field equation & Conditional \\
 Def.~8.1 & Dimension of each space the $\Phi_i$ are drawn from & Exactly $2$ \\
 (9.2) & Number of independent operators of the stated kind & $200$ \\
-\S8.2, (12.6) & The operator annihilates the Weyl curvature & True for all $200$ \\
+\S9.1, \S12.4 & The operator annihilates the Weyl curvature & True for all $200$ \\
 (9.4), (9.7) & (9.8) is the Euler--Lagrange equation of the action & \textbf{False for every operator} \\
 \bottomrule
 \end{tabular}
@@ -128,14 +142,19 @@ Two of these deserve a remark.
 \paragraph{The signature.} For a metric of signature $(1,3)$ the form (3.8),
 $\langle A,B\rangle=\operatorname{Tr}(g^{-1}Ag^{-1}B)$, is diagonal on symmetric matrices with
 seven coefficients of one sign and three of the other, and the trace direction lies among the
-seven. So (3.8) as defined has signature $(7,3)$, and the $(4,6)$ the draft uses comes from
-reversing the sign of the trace direction by hand. The draft says this is a choice (footnote~2),
-so we record it as true.
+seven. So (3.8) as defined has signature $(7,3)$, or $(3,7)$ with the overall sign for which
+the draft's traceless part is $(3,6)$, and the $(4,6)$ of (3.9) comes from then reversing the
+sign of the trace direction by hand. The draft says this is a choice, in the text before (3.9)
+and in footnote~2, so we record it as true.
 
 \paragraph{A request fulfilled.} Footnote~3 says of the decomposition (3.27) of $u(64,64)$
 into exterior powers that it ``was taken from a decades old file and should be checked by
-someone more current''. We checked it. Given the standard rule for the degrees appearing in a
-Clifford commutator, the degrees congruent to $1,2 \bmod 4$ are closed under the bracket, the
+someone more current''. We checked it. The rule for the degrees appearing in a Clifford
+commutator is standard: the product of elements of degrees $p$ and $q$ has components in
+degrees $p+q-2k$, and exchanging the factors multiplies the component of degree $p+q-2k$ by
+$(-1)^{pq-k}$. This follows from the fact that reversal of the order of products is an
+anti-automorphism of the Clifford algebra acting on degree $m$ by $(-1)^{m(m-1)/2}$
+\cite[Chapter~I, Section~1]{LM}. Given this rule, the degrees congruent to $1,2 \bmod 4$ are closed under the bracket, the
 degrees congruent to $0,3\bmod 4$ twisted by $i$ bracket with them and with each other as
 (3.27) requires, and the dimensions are $8128+8256=128^2$. The decomposition is consistent.
 
@@ -161,7 +180,8 @@ of Lemma~6.5 fails by the same term.
 \end{theorem}
 
 The charitable response is that the sign in (6.4) is a misprint. With
-$\tau(h)=(h,+c(h))$, which is also the form in the 2020 lecture as transcribed in \cite{NP},
+$\tau(h)=(h,+c(h))$, which is also the form transcribed in \cite[Section~2.2]{NP} from the
+video presentation \cite{Video},
 Lemmas~6.5 and~7.2 are true. But Lemma~6.3, with $\pi$ as printed in (6.11), then fails:
 \[
 \pi\bigl(g\cdot\tau(h)\bigr) = \pi(g) + 2\,\eps\,(\dA h)\,h^{-1}\eps^{-1}.
@@ -173,8 +193,7 @@ both hold as printed for that sign, then $h^{-1}(\dA h)=0$ for every $h\in\mathc
 \end{theorem}
 
 So the printed text cannot be made true by choosing a convention. The draft anticipates
-something of the kind: footnote~7 says there ``may be 2 or more conflicting conventions in this
-section''. The theorem says where they are and that they cannot be reconciled without changing
+something of the kind: footnote~7 says there ``may be 2 or more conflicting convetions [\emph{sic}] in this section''. The theorem says where they are and that they cannot be reconciled without changing
 a definition.
 
 \section{The fix}
@@ -205,7 +224,7 @@ The first-order field equation (9.8) is
 \[
 \Sh_\eps\, F_{A_\omega} \;=\; -\,\kappa_1 *T_\omega .
 \]
-The curvature $F$ and the Hodge star are standard and we grant them. $T$ is the torsion of
+The curvature $F$ and the Hodge star are standard \cite{KN,LM} and we grant them. $T$ is the torsion of
 Section~7, now verified. The remaining ingredient is the shiab operator
 $\Sh_\eps:\Omega^2(Y,\mathrm{ad})\to\Omega^{d-1}(Y,\mathrm{ad})$. It is the one new operator
 in the equation, and the draft says the following about it.
@@ -222,8 +241,18 @@ to locate the notes from decades ago that originally picked out the operator of 
 properties relative to the Bianchi identity.'' (footnote~10)
 \end{itemize}
 
-A repair requires something to repair. Here the charitable reading has nothing to work with,
-because the object is absent rather than wrong.
+These are from Sections~8, 8.2 and~9.1 of the draft. A repair requires something to repair.
+Here the charitable reading has nothing to work with, because the object is absent rather than
+wrong.
+
+We are not the first to stop at this operator. Nguyen and Polya objected to it in writing
+before the draft existed \cite[Section~3.1]{NP}. Their objection is to the version in the video
+\cite{Video}, where the Lie algebra is $u(128)$ and the definition needs a complexification
+that is not stated. The draft appeared five weeks after their response, with $u(64,64)$ and the
+complexified Clifford algebra in (8.4)--(8.6), which are among the statements checked in
+Section~2. What we add is that in the written draft the operator is still not specified, and,
+in Sections~\ref{sec:count} and~\ref{sec:action}, a count of what the specification would have
+to choose among.
 
 The draft does offer one sample operator, (9.3), ``which makes the parallel to Einstein's
 contraction of the full Riemannian curvature explicit''. We tried to take that as the
@@ -236,7 +265,9 @@ Let a group act on a ring $A$ by conjugation and on a set $V$. If $\Phi:V\to A$ 
 and $\lambda\in A$ commutes with the group, then $v\mapsto\Phi(v)\lambda$ is equivariant.
 \end{proposition}
 
-In $Cl(7,7)$ the volume element $\lambda$ commutes with $Spin(7,7)$. Taking $\Phi(v)=\gamma(v)$
+In $Cl(7,7)$ the volume element $\lambda$ anticommutes with vectors, because the dimension is
+even, and so commutes with the even subalgebra and with $Spin(7,7)$ inside it
+\cite[Chapter~I, Section~3]{LM}. Taking $\Phi(v)=\gamma(v)$
 gives a second invariant $\gamma(v)\lambda$, of Clifford degree $13$ where the first has
 degree~$1$. The draft's own equation (8.5) places both degrees inside $so(64,64)\subset
 u(64,64)$. The same holds for $\Phi_2$ with degrees $2$ and~$12$, by (8.5) and (8.6). So each
@@ -247,7 +278,7 @@ is given no value.
 
 What can be stated in Lean is therefore this.
 
-\begin{theorem}[\lean{upsilon\_equivariant}]
+\begin{theorem}[\lean{upsilon\_equivariant}]\label{thm:upsilon}
 Let $\Sh$ be \emph{any} family of additive maps
 $\Sh_\eps:\Omega^2\to\Omega^{d-1}$ satisfying
 $\Sh_{\eps h}(h^{-1}\xi h)=h^{-1}(\Sh_\eps\xi)h$. Then, granting the standard equivariance of
@@ -275,7 +306,7 @@ $\Sh_\eps\xi=B(\eps^{-1}\Phi\eps,\,\xi)$ satisfies
 $\Sh_{\eps h}(h^{-1}\xi h)=h^{-1}(\Sh_\eps\xi)h$.
 \end{proposition}
 
-So the hypothesis of Theorem~5 holds for every operator of this shape, and the gauge covariance
+So the hypothesis of Theorem~\ref{thm:upsilon} holds for every operator of this shape, and the gauge covariance
 of the field equation is established for all of them. This is good news for the draft. It also
 means that gauge covariance, the property the construction is advertised for, does nothing to
 select $\Phi$.
@@ -285,13 +316,16 @@ tautological Clifford-valued forms
 \[
 \Phi_1=\sum_a e^a\otimes\gamma_a,\qquad \Phi_2=\sum_{a<b} e^a\wedge e^b\otimes\gamma_a\gamma_b ,
 \]
-where $\Phi_1$ is the form whose Clifford action defines the Dirac operator. We put these into
+where $\Phi_1$ is the form whose Clifford action defines the Dirac operator
+\cite[Chapter~II, Section~5]{LM}. We put these into
 the sample operator (9.3) at $\eps=1$ and applied it to the curvature of the spin connection of
-a metric, $\xi=\tfrac14 R_{efcd}\,e^e\wedge e^f\otimes\gamma^c\gamma^d$. After taking Hodge
+a metric, $\xi=\tfrac14 R_{efcd}\,e^e\wedge e^f\otimes\gamma^c\gamma^d$
+\cite[Chapter~II, Section~4]{LM}. After taking Hodge
 duals, (9.3) has a first term $P_f=\sum_a[\gamma_a,\xi_{af}]$, labelled ``Ricci like'', and a
 second term $Q_f=[\gamma_f,S]$ with $S=\sum_{a<b}[\gamma_a\gamma_b,\xi_{ab}]$, labelled
 ``Ricci scalar like''. The draft's notation allows each bracket to be a commutator or the
-symmetric product $\{a,b\}=i(ab+ba)$ of its appendix, and (9.3) prints plain brackets. We
+symmetric product $\{a,b\}=i(ab+ba)$ of its appendix (the text after (8.1), and (12.27)), and
+(9.3) prints plain brackets. We
 evaluated all eight combinations on random tensors with the symmetries of a Riemann tensor, in
 dimensions $4$ and $6$ with a positive-definite metric
 (\lean{experiments/einstein\_check.py}).
@@ -308,21 +342,29 @@ for the Hodge star and the Clifford relation that the draft does not state.
 \end{enumerate}
 
 The reason for item~2 is short. The Riemann tensor is unchanged when its first pair of indices
-is exchanged with its second, which makes the two orderings in the inner bracket equal, so
+is exchanged with its second \cite[Section~1.G]{Besse}, which makes the two orderings in the inner bracket equal, so
 their difference vanishes. And had the inner bracket produced the scalar curvature, the outer
 bracket would be the commutator of $\gamma_f$ with a scalar, which is also zero. The symmetric
 product adds where the commutator subtracts, and
-$R_{abcd}\gamma^a\gamma^b\gamma^c\gamma^d=-2R$ supplies the scalar.
+$R_{abcd}\gamma^a\gamma^b\gamma^c\gamma^d=-2R$ supplies the scalar. This identity, and the
+identity that makes the first term the Ricci tensor, are the ones used to prove
+Lichnerowicz's formula for the square of the Dirac operator \cite[Chapter~II, Section~8]{LM};
+their signs depend on the convention for the Clifford relation.
 
-Without its scalar term the equation is the one Einstein published in November 1915 and
-replaced later the same month, because the Ricci tensor alone is not divergence-free and the
-equation is then inconsistent with conservation of energy.
+Without its scalar term the equation is $R_{\mu\nu}=-\kappa T_{\mu\nu}$, the generally
+covariant equation of Einstein's addendum of 11~November 1915 \cite{Ein15b}, which followed the
+paper of 4~November \cite{Ein15a}. It required the hypothesis that the trace of the energy
+tensor of matter vanishes, and two weeks later Einstein replaced it with the equation that has
+the trace term \cite{Ein15c}; the history is told in \cite{JR}. The reason is the one a modern
+reader would give. The divergence of the Ricci tensor is half the gradient of the scalar
+curvature, not zero, so the earlier equation is compatible with conservation of energy and
+momentum only if the trace of the energy tensor is constant.
 
 \paragraph{What the reconstruction shows.} Read as generously as possible, with forms from the
 textbooks and the one bracket assignment that works, the draft's sample operator is correct on
 the gravitational part of the curvature. We are glad to be able to report that. But what it is
-correct \emph{as} is the Einstein tensor in Clifford notation, which is the contraction of
-Einstein--Cartan gravity and has been known for a century. The curvature in the draft takes
+correct \emph{as} is the Einstein tensor \cite{Ein15c} in Clifford notation, which has been
+known since 1915. The curvature in the draft takes
 values in all of $u(64,64)$, of which $so(7,7)=\Lambda^2$ is $91$ dimensions out of $16384$.
 For the rest, the pair symmetry and Bianchi identity used above are not available, the
 literature offers no operator, and the draft does not say what $\Sh$ does. That remainder is
@@ -342,8 +384,12 @@ are, at $\eps=1$, the $Spin(7,7)$-equivariant linear maps
 R^{7,7})\otimes u(64,64).
 \]
 These form a real vector space. Its dimension can be computed, because by (8.2)--(8.6)
-$u(64,64)$ is the sum of the exterior powers $\Lambda^0,\dots,\Lambda^{14}$ as a representation,
-and tensor products of exterior powers decompose by a standard formula (Brauer--Klimyk).
+$u(64,64)$ is the sum of the exterior powers $\Lambda^0,\dots,\Lambda^{14}$ as a representation
+(the Clifford algebra and the exterior algebra are isomorphic as representations of the
+orthogonal group \cite[Chapter~I, Section~1]{LM}), each exterior power is irreducible except
+the middle one, which is a sum of two \cite[Section~19.2]{FH}, and tensor products of
+irreducible representations decompose by the formula of Brauer and Klimyk
+\cite{Brauer,Klimyk}.
 
 \begin{proposition}\label{prop:count}
 \begin{enumerate}
@@ -357,16 +403,19 @@ That is four parameters.
 \end{enumerate}
 \end{proposition}
 
-Items 3 and 4 follow from Schur's lemma once the decomposition is known: the Weyl tensor is an
-irreducible representation that does not occur in $\Lambda^{13}\otimes u(64,64)$, and the
-traceless Ricci tensor and the scalar each occur there twice. The computation is
+Items 3 and 4 follow from Schur's lemma \cite[Section~1.2]{FH} once the decomposition is known.
+The curvature tensor of a metric is the sum of three irreducible pieces, the Weyl tensor, the
+traceless Ricci tensor and the scalar curvature \cite[Section~1.G]{Besse}. The Weyl piece does
+not occur in $\Lambda^{13}\otimes u(64,64)$, and the traceless Ricci tensor and the scalar each
+occur there twice. The computation is
 \lean{experiments/count\_operators.py}. It is carried out in two independent orders that
-agree, the dimensions of the pieces add up to the dimensions of the products, and in dimension
+agree, the dimensions of the pieces (from Weyl's dimension formula \cite[Section~24.1]{FH}) add
+up to the dimensions of the products, and in dimension
 $4$ the analogous count ($40$) agrees with a brute-force construction of all the operators as
 matrices (\lean{experiments/brute\_force\_d4.py}). It is a computation and not a Lean proof.
 
-Three consequences. First, the draft's statement that the operator ``always kills off the Weyl
-curvature'' is true, and it is true of every candidate, so like gauge covariance it selects
+Three consequences. First, the draft's statement in its Section~12.4 that the operator ``always
+kills off the Weyl curvature'' is true, and it is true of every candidate, so like gauge covariance it selects
 nothing. Second, Einstein's equation fixes the ratio of Ricci to scalar, which is a condition
 on four of the $200$ parameters; that is the whole of what gravity can say about the operator.
 Third, the remaining $196$ parameters govern what the operator does to the part of the
@@ -380,7 +429,8 @@ identity'', within a Lagrangian framework. It gives the action (9.4),
 I=\bigl\langle T,\;*\,\Sh_\eps\bigl(F_B+\tfrac12 d_BT+\tfrac13[T,T]\bigr)\bigr\rangle
 +\tfrac{\kappa_1}{2}\langle T,*T\rangle ,
 \]
-modelled on Chern--Simons theory, and states in (9.7) that its derivative in the direction of
+modelled on Chern--Simons theory \cite{CS,Witten} (the draft says its model ``abstracts the
+Einstein-Hilbert and Chern-Simons actions''), and states in (9.7) that its derivative in the direction of
 the connection is the field equation: $\partial_s I(\eps,\vp+s\alpha)=\langle\alpha,\,
 \Sh_\eps F_A+\kappa_1{*T}\rangle$. This is a condition on $\Sh$ that can be tested for all
 $200$ operators at once.
@@ -396,7 +446,8 @@ $\vp$ and $\alpha$. Then $\Sh=0$.
 Write $A=B+T$, so that $F_A=F_B+d_BT+\tfrac12[T\wedge T]$, and encode the operator by its
 pairing $K^{abc}(X,Y)=\langle e^c\otimes Y,\,*\Sh(e^a\wedge e^b\otimes X)\rangle$, which is
 antisymmetric in $a,b$. An expression is the derivative of a functional only if its own
-derivative is symmetric. Here that means
+derivative is symmetric, because second derivatives commute; this is the Helmholtz condition of
+the inverse problem of the calculus of variations \cite[Section~5.4]{Olver}. Here that means
 $\int K(d_B\beta+[T\wedge\beta],\alpha)=\int K(d_B\alpha+[T\wedge\alpha],\beta)$ for all
 $T,\alpha,\beta$. The term without $T$, after an integration by parts, gives
 $K^{acb}(Y,X)=-K^{abc}(X,Y)$. The term linear in $T$ has no derivatives and gives
@@ -404,9 +455,13 @@ $K^{abc}([Z,X],Y)=K^{acb}([Z,Y],X)$. From the first condition $K^{abc}$ is symme
 and totally antisymmetric in $a,b,c$; with the second, each $K^{abc}$ is a symmetric bilinear
 form on $u(64,64)$ invariant under the bracket with every $Z$ (\lean{GU.Variational}). The
 invariant symmetric forms on $u(64,64)$ are spanned by $\operatorname{Tr}(XY)$ and
-$\operatorname{Tr}X\operatorname{Tr}Y$, so $K^{abc}=v_1^{abc}\operatorname{Tr}(XY)
+$\operatorname{Tr}X\operatorname{Tr}Y$: the algebra is its centre plus $su(64,64)$, whose
+complexification $sl(128,\mathbb C)$ is simple, and on a simple Lie algebra the invariant
+symmetric forms are the multiples of the Killing form by Schur's lemma
+\cite[Section~6]{Humphreys}. So $K^{abc}=v_1^{abc}\operatorname{Tr}(XY)
 +v_2^{abc}\operatorname{Tr}X\operatorname{Tr}Y$ with $v_1,v_2$ three-forms. Equivariance
-requires $v_1$ and $v_2$ to be fixed by $Spin(7,7)$, and no nonzero three-form is.
+requires $v_1$ and $v_2$ to be fixed by $Spin(7,7)$, and no nonzero three-form is, because
+$\Lambda^3$ is an irreducible representation of dimension $364$ \cite[Section~19.2]{FH}.
 \end{proof}
 
 The counts agree with the argument. Of the $200$ operators, $48$ satisfy the first condition
@@ -415,7 +470,8 @@ brute-force construction gives $40$, $8$ and $0$.
 
 The reason is visible in the model. Chern--Simons theory works in three dimensions because
 three-dimensional space has an invariant three-form, the volume form, and
-$K^{abc}=\epsilon^{abc}\operatorname{Tr}(XY)$ is the solution. Fourteen-dimensional space has
+$K^{abc}=\epsilon^{abc}\operatorname{Tr}(XY)$ is the solution, which is the Chern--Simons
+action \cite{CS,Witten}. Fourteen-dimensional space has
 none. The argument uses nothing else about the structure group, so it is unaffected if the
 group is reduced to one preserving the splitting of the tangent space of $Y$ into its
 four- and ten-dimensional parts, which also fixes no three-form. The second condition also
@@ -473,8 +529,12 @@ conditions is a hand derivation that no one else has checked. It concerns the va
 the connection only, as (9.7) does. Nothing here bears on whether a completed theory would
 describe nature.
 
-The Lean project accompanying this note builds against Mathlib for Lean~4.35 and contains no
-\texttt{sorry}.
+The Lean project accompanying this note builds against Mathlib \texttt{v4.35.0} with Lean~4.35
+and contains no \texttt{sorry}. The draft \cite{GU} and the response \cite{NP} were read
+directly, and every quotation and number taken from them was checked against the files cited.
+The bibliographic details of the papers cited were checked against published records. Books are
+cited by chapter or section, for standard material, and those pointers were not checked against
+the printed editions.
 
 
 \section{Conclusion, in plain terms}
@@ -503,8 +563,8 @@ Four things seem worth drawing from this.
 
 \emph{Wrong and undefined are different conditions.} The sign errors made definite claims, so
 they could be tested, found false and corrected. The operator makes no definite
-claim, so there is nothing to test. Nguyen and Polya close their response by quoting Dyson: it
-is better to be wrong than to be vague. A proof assistant enforces that preference mechanically.
+claim, so there is nothing to test. Nguyen and Polya open their conclusions with a remark they attribute to Freeman Dyson: ``It is
+better to be wrong than to be vague'' \cite[Section~4]{NP}. A proof assistant enforces that preference mechanically.
 It will take a false statement and show that it is false. It cannot do anything with a
 statement that has not been made.
 
@@ -527,16 +587,59 @@ equation that does not yet exist. This is not evidence that the idea is false. I
 absence of anything that could be evidence either way, and the burden of supplying it rests
 with the person making the claim.
 
-A last point concerns this note itself. Its author is a language model, and a language model's
+A last point concerns this note itself. One of its authors is a language model, which wrote the proofs, and a language model's
 assurance that a proof is correct is worth nothing. That is the reason for the form the work
 takes. The Lean results do not ask to be believed; anyone can build the project and watch the
 kernel accept them. The numerical experiment is a short script and can be rerun. The same standard
 that this note applies to the draft is the one it should be held to.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}\small
 \bibitem{GU} E.~Weinstein, \emph{Geometric Unity: Author's Working Draft, v~1.0}, April~1,
-2021.
+2021. \url{https://geometricunity.nyc3.digitaloceanspaces.com/Geometric_Unity-Draft-April-1st-2021.pdf}
+(retrieved 10~November 2026).
 \bibitem{NP} T.~Nguyen and T.~Polya, \emph{A Response to Geometric Unity}, February~23, 2021.
+\url{https://files.timothynguyen.org/geometric_unity.pdf} (retrieved 10~November 2026).
+\bibitem{Video} E.~Weinstein, \emph{A Portal Special Presentation --- Geometric Unity: A First
+Look}, video, uploaded April~2, 2020, \url{https://youtu.be/Z7rd04KzLcg}. Cited here through
+the transcription and timestamps in \cite{NP}; we did not consult the video.
+\bibitem{Lean4} L.~de~Moura and S.~Ullrich, The Lean~4 theorem prover and programming language,
+in \emph{Automated Deduction -- CADE~28}, Lecture Notes in Computer Science 12699, Springer,
+2021, pp.~625--635.
+\bibitem{Mathlib} The mathlib Community, The Lean mathematical library, in \emph{Proceedings of
+the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs (CPP~2020)}, ACM,
+2020, pp.~367--381.
+\bibitem{KN} S.~Kobayashi and K.~Nomizu, \emph{Foundations of Differential Geometry}, Vol.~I,
+Interscience, 1963.
+\bibitem{DK} S.~K.~Donaldson and P.~B.~Kronheimer, \emph{The Geometry of Four-Manifolds},
+Oxford University Press, 1990.
+\bibitem{LM} H.~B.~Lawson, Jr.\ and M.-L.~Michelsohn, \emph{Spin Geometry}, Princeton
+University Press, 1989.
+\bibitem{Brown} K.~S.~Brown, \emph{Cohomology of Groups}, Graduate Texts in Mathematics 87,
+Springer, 1982.
+\bibitem{Besse} A.~L.~Besse, \emph{Einstein Manifolds}, Springer, 1987.
+\bibitem{FH} W.~Fulton and J.~Harris, \emph{Representation Theory: A First Course}, Graduate
+Texts in Mathematics 129, Springer, 1991.
+\bibitem{Humphreys} J.~E.~Humphreys, \emph{Introduction to Lie Algebras and Representation
+Theory}, Graduate Texts in Mathematics 9, Springer, 1972.
+\bibitem{Brauer} R.~Brauer, Sur la multiplication des caract\'eristiques des groupes continus
+et semi-simples, \emph{C.~R.~Acad.\ Sci.\ Paris} \textbf{204} (1937), 1784--1786.
+\bibitem{Klimyk} A.~U.~Klimyk, Decomposition of the direct product of irreducible
+representations of semisimple Lie algebras into irreducible representations (in Russian),
+\emph{Ukrain.\ Mat.\ Zh.} \textbf{18} (1966), no.~5, 19--27.
+\bibitem{Olver} P.~J.~Olver, \emph{Applications of Lie Groups to Differential Equations},
+2nd~ed., Graduate Texts in Mathematics 107, Springer, 1993.
+\bibitem{CS} S.-S.~Chern and J.~Simons, Characteristic forms and geometric invariants,
+\emph{Ann.\ of Math.} \textbf{99} (1974), 48--69.
+\bibitem{Witten} E.~Witten, Quantum field theory and the Jones polynomial, \emph{Comm.\ Math.\
+Phys.} \textbf{121} (1989), 351--399.
+\bibitem{Ein15a} A.~Einstein, Zur allgemeinen Relativit\"atstheorie, \emph{Sitzungsber.\
+K\"onigl.\ Preuss.\ Akad.\ Wiss.\ (Berlin)} (1915), 778--786.
+\bibitem{Ein15b} A.~Einstein, Zur allgemeinen Relativit\"atstheorie (Nachtrag), \emph{ibid.}
+(1915), 799--801.
+\bibitem{Ein15c} A.~Einstein, Die Feldgleichungen der Gravitation, \emph{ibid.} (1915),
+844--847.
+\bibitem{JR} M.~Janssen and J.~Renn, Arch and scaffold: How Einstein found his field
+equations, \emph{Physics Today} \textbf{68} (2015), no.~11, 30.
 \end{thebibliography}
 
 \end{document}

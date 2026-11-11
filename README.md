@@ -35,7 +35,7 @@ prints the axioms each result depends on.
 | eq. 9.8 | The field equation is gauge covariant | Only as an implication from an undefined operator's assumed properties | `upsilon_equivariant` |
 | Def. 8.1 | Dimension of each space the Φᵢ are drawn from | Exactly 2 (computed) | `experiments/count_operators.py` |
 | eq. 9.2 | Number of independent operators of the stated kind | 200 (computed) | `experiments/count_operators.py` |
-| §8.2, eq. 12.6 | The operator annihilates the Weyl curvature | True for all 200 (computed) | `experiments/count_operators.py` |
+| §9.1, §12.4 | The operator annihilates the Weyl curvature | True for all 200 (computed) | `experiments/count_operators.py` |
 | eq. 9.4, 9.7 | Eq. 9.8 is the Euler–Lagrange equation of the action | **False for every nonzero operator** | `Variational.lean`, `experiments/count_variational.py` |
 
 Everything before Section 6 that could be checked is correct. It is also standard: these
@@ -52,7 +52,7 @@ happens in eq. (6.20). Flipping the sign of τ makes Lemmas 6.5 and 7.2 true and
 Lemma 6.3 false by the same amount. `lemma63_and_lemma72_incompatible` proves that no
 choice of sign makes both hold unless every gauge transformation is covariantly constant.
 
-The draft's footnote 7 says there "may be 2 or more conflicting conventions in this
+The draft's footnote 7 says there "may be 2 or more conflicting convetions [sic] in this
 section". There are, and this is where. The error is repairable: `projFixed` gives a
 corrected projection for which everything is consistent. The draft does not make the
 repair.
@@ -118,7 +118,9 @@ been reviewed.
 
 The bundle-level constructions (the observerse as a manifold, the chimeric bundle, spinor
 bundles, curvature, the Hodge star) are standard differential geometry that Mathlib cannot
-yet express: it has no spin structures or connections on associated bundles. Those are
+yet express: it has the spin group, a Hodge star on exterior powers and covariant derivatives
+on vector bundles, but no principal bundles, spin structures, spinor bundles, connections on
+associated bundles or curvature. Those are
 gaps in Mathlib, not in the draft, and are not counted against it. The Clifford degree rule
 used in `CliffordGrading.lean` and the isomorphism Cl(7,7) ≅ ℝ(128) are taken as known
 rather than derived. Sections 10–12 depend on the undefined operator.
