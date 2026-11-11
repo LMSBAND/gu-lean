@@ -36,9 +36,13 @@ repair, and granting every standard fact the proof assistant's library cannot ye
 thing remains: the field equation is built from an operator the draft does not define. We then
 try to supply the missing definition from the literature. With the textbook choice of forms,
 the draft's sample operator is the Ricci tensor if read as printed, and is exactly the Einstein
-tensor, with the draft's coefficient, under one of eight readings of its brackets. So the part
-of the operator that can be reconstructed is the part that was already known, and the part that
-would be new is the part that is missing.
+tensor, with the draft's coefficient, under one of eight readings of its brackets. Finally we
+count the operators that the draft's description allows. There are exactly $200$ independent
+ones, every one of them annihilates the Weyl curvature, and gravity constrains four of their
+parameters. For none of them except zero can the field equation be the Euler--Lagrange equation
+of an action in the way the draft states. So the part of the operator that can be reconstructed
+is the part that was already known, and the part that would be new is missing and cannot be
+supplied in the form the draft describes.
 \end{abstract}
 
 \section{Ground rules}
@@ -109,9 +113,13 @@ Def.~8.1 & The forms $\Phi_i$ & \textbf{Not determined} \\
 (8.1) & The conjugation recipe is equivariant for every $\Phi$ & True \\
 (9.3) & The sample operator is Einstein's contraction & One reading of eight \\
 (9.8) & Gauge covariance of the field equation & Conditional \\
+Def.~8.1 & Dimension of each space the $\Phi_i$ are drawn from & Exactly $2$ \\
+(9.2) & Number of independent operators of the stated kind & $200$ \\
+\S8.2, (12.6) & The operator annihilates the Weyl curvature & True for all $200$ \\
+(9.4), (9.7) & (9.8) is the Euler--Lagrange equation of the action & \textbf{False for every operator} \\
 \bottomrule
 \end{tabular}
-\caption{Statements examined. All results are machine-checked except the row for (9.3), which is numerical, and where Section~\ref{sec:limits} says otherwise.}
+\caption{Statements examined. All results are machine-checked except the row for (9.3), which is numerical, the last four rows, whose status is given in Sections~\ref{sec:count} and~\ref{sec:action}, and where Section~\ref{sec:limits} says otherwise.}
 \label{tab}
 \end{table}
 
@@ -232,7 +240,8 @@ In $Cl(7,7)$ the volume element $\lambda$ commutes with $Spin(7,7)$. Taking $\Ph
 gives a second invariant $\gamma(v)\lambda$, of Clifford degree $13$ where the first has
 degree~$1$. The draft's own equation (8.5) places both degrees inside $so(64,64)\subset
 u(64,64)$. The same holds for $\Phi_2$ with degrees $2$ and~$12$, by (8.5) and (8.6). So each
-space the $\Phi_i$ are drawn from is at least two-dimensional, and the sample operator (9.3)
+space the $\Phi_i$ are drawn from is at least two-dimensional (Section~\ref{sec:count} shows
+that it is exactly two-dimensional), and the sample operator (9.3)
 has free parameters that the draft does not fix, in addition to the constant $\kappa_1$, which
 is given no value.
 
@@ -319,20 +328,126 @@ For the rest, the pair symmetry and Bianchi identity used above are not availabl
 literature offers no operator, and the draft does not say what $\Sh$ does. That remainder is
 where anything new in the theory would have to be.
 
+\section{Counting the operators}\label{sec:count}
+
+The reconstruction above tried one operator. The draft's description permits many, and the
+question of how many has a definite answer.
+
+By the proposition of Section~\ref{sec:fill}, conjugation by $\eps$ makes any fixed pointwise
+linear map gauge covariant. What the map must satisfy in order to be defined on the bundle at
+all is invariance under the structure group. So the operators of the kind the draft describes
+are, at $\eps=1$, the $Spin(7,7)$-equivariant linear maps
+\[
+\Lambda^2(\mathbb R^{7,7})\otimes u(64,64)\;\longrightarrow\;\Lambda^{13}(\mathbb
+R^{7,7})\otimes u(64,64).
+\]
+These form a real vector space. Its dimension can be computed, because by (8.2)--(8.6)
+$u(64,64)$ is the sum of the exterior powers $\Lambda^0,\dots,\Lambda^{14}$ as a representation,
+and tensor products of exterior powers decompose by a standard formula (Brauer--Klimyk).
+
+\begin{proposition}\label{prop:count}
+\begin{enumerate}
+\item The space of such operators has dimension $200$.
+\item For each $1\le i\le 13$ the space $[\Lambda^i\otimes u(64,64)]^{Spin(7,7)}$ of
+Definition~8.1 has dimension exactly $2$.
+\item Every one of the $200$ operators annihilates the Weyl curvature.
+\item On the curvature of a metric, the output of any of them is a combination of the
+traceless Ricci tensor and the scalar curvature, appearing in Clifford degrees $1$ and $13$.
+That is four parameters.
+\end{enumerate}
+\end{proposition}
+
+Items 3 and 4 follow from Schur's lemma once the decomposition is known: the Weyl tensor is an
+irreducible representation that does not occur in $\Lambda^{13}\otimes u(64,64)$, and the
+traceless Ricci tensor and the scalar each occur there twice. The computation is
+\lean{experiments/count\_operators.py}. It is carried out in two independent orders that
+agree, the dimensions of the pieces add up to the dimensions of the products, and in dimension
+$4$ the analogous count ($40$) agrees with a brute-force construction of all the operators as
+matrices (\lean{experiments/brute\_force\_d4.py}). It is a computation and not a Lean proof.
+
+Three consequences. First, the draft's statement that the operator ``always kills off the Weyl
+curvature'' is true, and it is true of every candidate, so like gauge covariance it selects
+nothing. Second, Einstein's equation fixes the ratio of Ricci to scalar, which is a condition
+on four of the $200$ parameters; that is the whole of what gravity can say about the operator.
+Third, the remaining $196$ parameters govern what the operator does to the part of the
+curvature that is not gravitational, and nothing in the draft constrains them.
+
+\section{The action does not give the equation}\label{sec:action}
+
+The draft does say how the operator was chosen: ``for its properties relative to the Bianchi
+identity'', within a Lagrangian framework. It gives the action (9.4),
+\[
+I=\bigl\langle T,\;*\,\Sh_\eps\bigl(F_B+\tfrac12 d_BT+\tfrac13[T,T]\bigr)\bigr\rangle
++\tfrac{\kappa_1}{2}\langle T,*T\rangle ,
+\]
+modelled on Chern--Simons theory, and states in (9.7) that its derivative in the direction of
+the connection is the field equation: $\partial_s I(\eps,\vp+s\alpha)=\langle\alpha,\,
+\Sh_\eps F_A+\kappa_1{*T}\rangle$. This is a condition on $\Sh$ that can be tested for all
+$200$ operators at once.
+
+\begin{proposition}\label{prop:action}
+Let $\Sh$ be a $Spin(7,7)$-equivariant operator as in Section~\ref{sec:count}, made gauge
+covariant by conjugation. Suppose there is any functional $I(\eps,\vp)$ with
+$\partial_sI(\eps,\vp+s\alpha)=\langle\alpha,\Sh_\eps F_A+\kappa_1{*T}\rangle$ for all
+$\vp$ and $\alpha$. Then $\Sh=0$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Write $A=B+T$, so that $F_A=F_B+d_BT+\tfrac12[T\wedge T]$, and encode the operator by its
+pairing $K^{abc}(X,Y)=\langle e^c\otimes Y,\,*\Sh(e^a\wedge e^b\otimes X)\rangle$, which is
+antisymmetric in $a,b$. An expression is the derivative of a functional only if its own
+derivative is symmetric. Here that means
+$\int K(d_B\beta+[T\wedge\beta],\alpha)=\int K(d_B\alpha+[T\wedge\alpha],\beta)$ for all
+$T,\alpha,\beta$. The term without $T$, after an integration by parts, gives
+$K^{acb}(Y,X)=-K^{abc}(X,Y)$. The term linear in $T$ has no derivatives and gives
+$K^{abc}([Z,X],Y)=K^{acb}([Z,Y],X)$. From the first condition $K^{abc}$ is symmetric in $X,Y$
+and totally antisymmetric in $a,b,c$; with the second, each $K^{abc}$ is a symmetric bilinear
+form on $u(64,64)$ invariant under the bracket with every $Z$ (\lean{GU.Variational}). The
+invariant symmetric forms on $u(64,64)$ are spanned by $\operatorname{Tr}(XY)$ and
+$\operatorname{Tr}X\operatorname{Tr}Y$, so $K^{abc}=v_1^{abc}\operatorname{Tr}(XY)
++v_2^{abc}\operatorname{Tr}X\operatorname{Tr}Y$ with $v_1,v_2$ three-forms. Equivariance
+requires $v_1$ and $v_2$ to be fixed by $Spin(7,7)$, and no nonzero three-form is.
+\end{proof}
+
+The counts agree with the argument. Of the $200$ operators, $48$ satisfy the first condition
+and none satisfies both (\lean{experiments/count\_variational.py}). In dimension $4$ the
+brute-force construction gives $40$, $8$ and $0$.
+
+The reason is visible in the model. Chern--Simons theory works in three dimensions because
+three-dimensional space has an invariant three-form, the volume form, and
+$K^{abc}=\epsilon^{abc}\operatorname{Tr}(XY)$ is the solution. Fourteen-dimensional space has
+none. The argument uses nothing else about the structure group, so it is unaffected if the
+group is reduced to one preserving the splitting of the tangent space of $Y$ into its
+four- and ten-dimensional parts, which also fixes no three-form. The second condition also
+forces the operator to be invariant under the whole gauge group, so that it cannot depend on
+$\eps$. Dependence on $\eps$ is what the ``ship in a bottle'' construction of Section~8 of the
+draft consists of.
+
+So (9.4) and (9.8) cannot both stand, whichever operator is chosen. The action (9.4) does have
+Euler--Lagrange equations for any $\Sh$, but they contain further terms, the adjoints of
+$\Sh\circ d_B$ and of $\Sh\circ[T\wedge\cdot\,]$, that (9.7) omits. And the equation (9.8), for
+any nonzero $\Sh$, is not the equation of any action in the connection. The index manipulation
+in the proof is checked in Lean. The two facts about invariant forms are standard and are not.
+The derivation of the two conditions from (9.7) is ours, done by hand, and has not been
+reviewed by anyone.
+
 \section{What would complete it}
 
-After the reconstruction the list is short. It would suffice to state:
+The list is now specific. It would suffice to state:
 \begin{enumerate}
-\item whether the forms and brackets of Section~\ref{sec:fill} are the intended ones, and
-which combination of each $\Phi_i$ with its volume-element twin is meant;
+\item which of the $200$ operators of Section~\ref{sec:count} is meant, or, if it is not among
+them, in what way the intended operator differs from the draft's description;
 \item a value or a role for $\kappa_1$;
-\item what $\Sh$ does to curvature outside $so(7,7)$, and a proof of whatever property replaces
-``annihilates the Weyl curvature'' there.
+\item the principle that selects it. ``Annihilates the Weyl curvature'' and ``gauge covariant''
+hold for all $200$ and cannot be that principle;
+\item either an action whose Euler--Lagrange equation is (9.8), or the corrected equation that
+the action (9.4) gives, since by Section~\ref{sec:action} these are different.
 \end{enumerate}
-Items 1 and 2 are a few lines. Item 3 is the theory.
+Item 2 is a line. Items 1, 3 and 4 are the theory.
 
 \paragraph{An offer.} This is meant literally. The signs are fixed, the decomposition is
-checked, and the gravitational part of the operator is reconstructed. In the Lean project the
+checked, the gravitational part of the operator is reconstructed, and the candidates are
+counted. In the Lean project the
 operator is a single field, \lean{FieldEquationInputs.shiab}, waiting for a definition. If the
 author can recall the operator, or choose one, it goes in that field, and the claims that
 depend on it become statements a proof assistant can check. We would be glad to finish the
@@ -348,8 +463,15 @@ element used in Section~5 are standard and are taken as known rather than derive
 bundle-level constructions of Sections~3 and~4 were not formalized; only their pointwise
 linear algebra was. The results of Section~\ref{sec:fill} on the Einstein tensor are numerical, for a
 positive-definite metric in dimensions $4$ and $6$ rather than signature $(7,7)$ in dimension
-$14$, and are not formalized. Nothing here bears on whether a completed theory would describe
-nature.
+$14$, and are not formalized. The counts of Sections~\ref{sec:count} and~\ref{sec:action} are
+computed by script for the complexified Lie algebra, which gives the real dimensions; they
+count operators that act pointwise and are invariant under the connected group, and requiring
+invariance under reflections as well would lower them. Proposition~\ref{prop:action} is the
+newest and least tested claim in this note. Its index lemma is machine-checked, its two
+representation-theoretic inputs are standard, and the step from the draft's (9.7) to the two
+conditions is a hand derivation that no one else has checked. It concerns the variation in
+the connection only, as (9.7) does. Nothing here bears on whether a completed theory would
+describe nature.
 
 The Lean project accompanying this note builds against Mathlib for Lean~4.35 and contains no
 \texttt{sorry}.
@@ -370,6 +492,12 @@ standard cookbook. Used exactly as the recipe is written, it gives the version o
 equation that Einstein himself discarded in 1915. Used in the one way that works, it gives
 Einstein's equation. Either way it gives nothing new, and it covers a small corner of what
 the recipe needs.
+
+Then we counted every ingredient that fits the recipe's description. There are $200$ of them.
+Gravity can tell four apart, and those four were settled in 1915. Nothing in the recipe chooses
+among the rest. Last, the recipe says where its main equation comes from, and that can be
+checked for all $200$ at once. It fails for every one of them. Whichever ingredient is used,
+the equation the recipe prints is not the one its own instructions produce.
 
 Four things seem worth drawing from this.
 

@@ -4,6 +4,7 @@ import GuLean.Shiab
 import GuLean.Repaired
 import GuLean.Signature
 import GuLean.CliffordGrading
+import GuLean.Variational
 
 /-! Every result below depends only on Lean's standard axioms: no `sorry`. -/
 
@@ -25,3 +26,4 @@ import GuLean.CliffordGrading
 #print axioms GU.Repaired.leftAct_mul
 #print axioms GU.Repaired.proj_mul
 #print axioms GU.conjugated_pairing_equivariant
+#print axioms GU.Variational.adInvariant_of_secondOrder

@@ -33,6 +33,10 @@ prints the axioms each result depends on.
 | eq. 9.3 | The sample operator is Einstein's contraction | One reading of eight (numerical) | `experiments/einstein_check.py` |
 | §8, eq. 9.2 | The shiab operator | **Not defined** | `FieldEquationInputs.shiab` |
 | eq. 9.8 | The field equation is gauge covariant | Only as an implication from an undefined operator's assumed properties | `upsilon_equivariant` |
+| Def. 8.1 | Dimension of each space the Φᵢ are drawn from | Exactly 2 (computed) | `experiments/count_operators.py` |
+| eq. 9.2 | Number of independent operators of the stated kind | 200 (computed) | `experiments/count_operators.py` |
+| §8.2, eq. 12.6 | The operator annihilates the Weyl curvature | True for all 200 (computed) | `experiments/count_operators.py` |
+| eq. 9.4, 9.7 | Eq. 9.8 is the Euler–Lagrange equation of the action | **False for every nonzero operator** | `Variational.lean`, `experiments/count_variational.py` |
 
 Everything before Section 6 that could be checked is correct. It is also standard: these
 are known facts about symmetric matrices and Clifford algebras. The errors begin where the
@@ -83,6 +87,32 @@ With a commutator in the first term and the draft's symmetric product in both br
 the second, it is the Einstein tensor with the printed coefficient ½. This is a numerical
 check in dimensions 4 and 6 with a positive-definite metric: `python3
 experiments/einstein_check.py`. It covers so(7,7), 91 of the 16384 dimensions of u(64,64).
+
+## Counting the operators
+
+The operators the draft describes are, before conjugation by ε, the Spin(7,7)-equivariant
+linear maps Λ² ⊗ u(64,64) → Λ¹³ ⊗ u(64,64). There are exactly 200 independent ones
+(`python3 experiments/count_operators.py`, a Brauer–Klimyk computation run in two orders that
+agree). Every one of them annihilates the Weyl curvature, so that property selects nothing.
+On the curvature of a metric they produce only traceless Ricci and scalar terms, in Clifford
+degrees 1 and 13: four parameters, which Einstein's equation constrains. The other 196 are
+not constrained by anything in the draft.
+
+## The action does not give the equation
+
+The draft's eq. (9.7) says the field equation (9.8) is the derivative of the action (9.4) in
+the direction of the connection. For that to hold, the linearised equation must be
+self-adjoint. `GuLean/Variational.lean` proves that this forces the operator's pairing to be
+a totally antisymmetric three-index family of symmetric forms on u(64,64), each invariant
+under the whole Lie algebra. Such forms are multiples of the trace forms, so the operator
+would have to be built from a Spin(7,7)-invariant three-form, and there is none. Of the 200
+operators, 48 pass the first-order condition and none passes both
+(`python3 experiments/count_variational.py`). In dimension 4 a brute-force construction of
+every operator as a matrix gives 40, 8 and 0 (`python3 experiments/brute_force_d4.py`).
+
+Status: the index lemma is machine-checked; the two facts about invariant forms are standard
+and not formalized; the derivation of the two conditions from eq. (9.7) is by hand and has not
+been reviewed.
 
 ## Not attempted
 
